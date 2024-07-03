@@ -3,44 +3,45 @@ import java.awt.*;
 
 public class MyFrame extends JFrame {
     private final Button button;
-    private final Label label;
-    private boolean isRunning = false;
+    private volatile boolean isRunning = false;
     private int count = 0;
 
     public MyFrame() {
         setTitle("Prog4Lec14Sub1-22R903010");
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout());
-
-        label = new Label(String.valueOf(count));
-        add(label);
 
         button = new Button("Start");
         button.addActionListener(e -> {
-            if (isRunning) {
-                isRunning = false;
-                button.setLabel("Start");
-            } else {
-                isRunning = true;
-                button.setLabel("Stop");
-                startCount();
+            synchronized (this) {
+                if (isRunning) {
+                    isRunning = false;
+                    button.setLabel("Start");
+                } else {
+                    isRunning = true;
+                    startCount();
+                }
             }
         });
+
         add(button);
     }
 
+    /**
+     * ボタンが押された時にカウントとラベルを変更する
+     */
     private void startCount() {
         Thread counterThread = new Thread(() -> {
             count = 0;
             while (isRunning) {
-                count++;
-                label.setText(String.valueOf(count));
+                button.setLabel(String.valueOf(++count));
                 if (count == Integer.MAX_VALUE) {
+                    /** 最大値になったらカウント停止する */
                     isRunning = false;
                     return;
                 }
                 try {
+                    /** カウント間隔 */
                     Thread.sleep(1);
                 } catch (InterruptedException error) {
                     error.printStackTrace();

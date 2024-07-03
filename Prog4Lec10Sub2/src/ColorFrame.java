@@ -3,6 +3,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * ボタンによって背景が変わるフレームクラス
+ */
 public class ColorFrame extends JFrame implements ActionListener {
     private final Panel panel;
 
@@ -31,6 +34,11 @@ public class ColorFrame extends JFrame implements ActionListener {
         add(panel);
     }
 
+    /**
+     * ボタンが押された時の処理
+     *
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String colorString = e.getActionCommand();
